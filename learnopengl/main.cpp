@@ -48,25 +48,8 @@ int main()
       return -1;
    }
 
-
-
-   unsigned int vertexShader;
-   vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-   std::string shader = getShader("basic_vertex");
-   const char* shader_code = shader.c_str();
-   glShaderSource(vertexShader, 1, &shader_code, NULL);
-   glCompileShader(vertexShader);
-
-   int success;
-   char buf[512];
-   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-   if( !success )
-   {
-      glGetShaderInfoLog(vertexShader, 512, NULL, buf);
-      std::cout << "Error: Shader did not compile sucessfully, InfoLog = " << buf << std::endl;
-   }
+   unsigned int VertexShader = compileShader(GL_VERTEX_SHADER, "basic_vertex");
+   unsigned int FragmentShader = compileShader(GL_FRAGMENT_SHADER, "basic_fragment");
 
    while( !glfwWindowShouldClose(window) )
    { 

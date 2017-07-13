@@ -29,6 +29,9 @@
     <None Include="shaders\basic_vertex.glsl">
       <Filter>Shader files</Filter>
     </None>
+    <None Include="shaders\basic_fragment.glsl">
+      <Filter>Shader files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaders\shaders.h">
