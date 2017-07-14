@@ -69,7 +69,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\Ando\Development\3rdparty\gl\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>D:\Ando\Development\3rdparty\gl\include;D:\Ando\Development\3rdparty\stb\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>D:\Ando\Development\3rdparty\gl\lib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +125,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="glad\glad.c" />
+    <ClCompile Include="3rdparty\glad.c" />
+    <ClCompile Include="3rdparty\stb_image.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader\shader.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,29 +13,38 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shader Files">
+    <Filter Include="shader">
       <UniqueIdentifier>{966778a8-484c-4bc6-a438-c3ccb6890895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{fdb0111c-161c-4df7-99e5-98108827aebb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="glad\glad.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="3rdparty\glad.c">
+      <Filter>3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\stb_image.cpp">
+      <Filter>3rdparty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\basic.slfs">
-      <Filter>Shader Files</Filter>
+      <Filter>shader</Filter>
     </None>
     <None Include="shader\basic.slvs">
-      <Filter>Shader Files</Filter>
+      <Filter>shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader\shader.h">
-      <Filter>Shader Files</Filter>
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
