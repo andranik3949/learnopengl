@@ -48,8 +48,40 @@ int main()
       return -1;
    }
 
-   unsigned int VertexShader = compileShader(GL_VERTEX_SHADER, "basic_vertex");
-   unsigned int FragmentShader = compileShader(GL_FRAGMENT_SHADER, "basic_fragment");
+   unsigned int program = getProgram("basic_vertex", "basic_fragment");
+
+   unsigned int VAO;
+   glGenVertexArrays(1, &VAO);
+   glBindVertexArray(VAO);
+
+   unsigned int VBO;
+   glGenBuffers(1, &VBO);
+   glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+   float vertices[] = {
+      -0.5f,  0.5f, 0,
+      -0.5f, -0.5f, 0,
+       0.5f,  0.5f, 0,
+       0.5f, -0.5f, 0
+   };
+   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+   unsigned int EBO;
+   glGenBuffers(1, &EBO);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+   unsigned int indices[] = {
+      0, 1, 2,
+      1, 2, 3
+   };
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
+
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+   glEnableVertexAttribArray(0);
+
+   glBindVertexArray(0);
+
+   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
    while( !glfwWindowShouldClose(window) )
    { 
@@ -57,6 +89,10 @@ int main()
 
       glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT);
+
+      glUseProgram(program);
+      glBindVertexArray(VAO);
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
       glfwPollEvents();
       glfwSwapBuffers(window);
