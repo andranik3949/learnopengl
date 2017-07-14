@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "shaders\shaders.h";
+#include "shader\shader.h";
 
 
 const int window_width = 800;
@@ -48,8 +48,6 @@ int main()
       return -1;
    }
 
-   unsigned int program = getProgram("basic_vertex", "basic_fragment");
-
    unsigned int VAO;
    glGenVertexArrays(1, &VAO);
    glBindVertexArray(VAO);
@@ -59,10 +57,10 @@ int main()
    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
    float vertices[] = {
-      -0.5f,  0.5f, 0,
-      -0.5f, -0.5f, 0,
-       0.5f,  0.5f, 0,
-       0.5f, -0.5f, 0
+       0.0f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
+      -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
+       0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,
+       0.5f, -0.5f, 0.0f,  0.0f, 0.5f, 1.0f
    };
    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
@@ -76,23 +74,29 @@ int main()
    };
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
 
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
    glEnableVertexAttribArray(0);
+   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+   glEnableVertexAttribArray(1);
 
    glBindVertexArray(0);
 
    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   float clearR = 0.2f, clearG = 0.3f, clearB = 0.3f;
 
+   Shader shader("shader/basic.slvs", "shader/basic.slfs");
    while( !glfwWindowShouldClose(window) )
    { 
       processInput(window);
 
-      glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+      glClearColor(clearR, clearG, clearB, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT);
 
-      glUseProgram(program);
+	  shader.setUniform("offset", 0.0f);
+	  shader.use();
+	  
       glBindVertexArray(VAO);
-      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+      glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
       glfwPollEvents();
       glfwSwapBuffers(window);

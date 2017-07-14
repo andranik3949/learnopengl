@@ -129,11 +129,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\basic_fragment.glsl" />
-    <None Include="shaders\basic_vertex.glsl" />
+    <None Include="shader\basic.slfs" />
+    <None Include="shader\basic.slvs" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shaders\shaders.h" />
+    <ClInclude Include="shader\shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
