@@ -11,14 +11,20 @@
 #include "shader\shader.h";
 
 
-const int window_width = 800;
-const int window_height = 600;
+int window_width = 800;
+int window_height = 600;
 
 float gamma = 0.0f;
 
+glm::vec3 camPos(0.0f, 0.0f, 3.0f);
+glm::vec3 camFront(0.0f, 0.0f, -1.0f);
+glm::vec3 camUp(0.0f, 1.0f, 0.0f);
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-   glViewport(10, 10, width - 10, height - 10);
+   window_width = width;
+   window_height = height;
+   glViewport(0, 0, window_width, window_height);
 }
 
 void processInput(GLFWwindow* window, Shader& program)
@@ -27,21 +33,32 @@ void processInput(GLFWwindow* window, Shader& program)
    {
       glfwSetWindowShouldClose(window, true);
    }
+
+   float cameraSpeed = 0.05f; // adjust accordingly
+   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+      camPos += cameraSpeed * camFront;
+   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+      camPos -= cameraSpeed * camFront;
+   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+      camPos -= glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+      camPos += glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+   
    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
    {
       gamma += 0.05f;
-      if (gamma > 1.0f)
+      /*if (gamma > 1.0f)
       {
          gamma = 1.0f;
-      }
+      }*/
    }
    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
    {
       gamma -= 0.05f;
-      if (gamma < 0.0f)
+      /*if (gamma < 0.0f)
       {
          gamma = 0.0f;
-      }
+      }*/
    }
 }
 
@@ -80,13 +97,64 @@ int main()
    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
    float vertices[] = {
-      -0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-      -0.5f,  0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
-       0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
-       0.5f,  0.5f, 0.0f,  0.0f, 0.5f, 1.0f,  1.0f, 1.0f
+      -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+       0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+       0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+       0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+      -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+      -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+      -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+       0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+       0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+       0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+      -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+      -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+      -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+      -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+      -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+      -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+      -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+      -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+       0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+       0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+       0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+       0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+       0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+       0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+      -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+       0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+       0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+       0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+      -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+      -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+      -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+       0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+       0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+       0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+      -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+      -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
    };
    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+   glm::vec3 cubePositions[] = {
+      glm::vec3(0.0f,  0.0f,  0.0f),
+      glm::vec3(2.0f,  5.0f, -15.0f),
+      glm::vec3(-1.5f, -2.2f, -2.5f),
+      glm::vec3(-3.8f, -2.0f, -12.3f),
+      glm::vec3(2.4f, -0.4f, -3.5f),
+      glm::vec3(-1.7f,  3.0f, -7.5f),
+      glm::vec3(1.3f, -2.0f, -2.5f),
+      glm::vec3(1.5f,  2.0f, -2.5f),
+      glm::vec3(1.5f,  0.2f, -1.5f),
+      glm::vec3(-1.3f,  1.0f, -1.5f)
+   };
+
+   /*
    unsigned int EBO;
    glGenBuffers(1, &EBO);
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -96,14 +164,12 @@ int main()
       1, 2, 3
    };
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
+   */
 
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
    glEnableVertexAttribArray(0);
-   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
    glEnableVertexAttribArray(1);
-   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-   glEnableVertexAttribArray(2);
-
 
    Texture containter("resources/container.jpg", GL_RGB);
    Texture awsomeface("resources/awesomeface.png", GL_RGBA);
@@ -114,13 +180,14 @@ int main()
    float clearR = 0.2f, clearG = 0.3f, clearB = 0.3f;
 
    Shader shader("shader/basic.slvs", "shader/basic.slfs");
-   
+   glEnable(GL_DEPTH_TEST);
+
    while( !glfwWindowShouldClose(window) )
    { 
       processInput(window, shader);
 
       glClearColor(clearR, clearG, clearB, 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	   shader.use();
 	   shader.setUniform("ourTexture1", 0);
@@ -131,24 +198,25 @@ int main()
 	   containter.bind(GL_TEXTURE0);
 	   awsomeface.bind(GL_TEXTURE1);
 
-      float time = glfwGetTime();
 
-      glm::mat4 trans;
-      trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-      trans = glm::rotate(trans, (float)time, glm::vec3(0.0f, 0.6f, 0.8f));
-      trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 1.0f));
-      glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+      glm::mat4 projection;
+      projection = glm::perspective(glm::radians(70.0f), (float)window_width / window_height, 0.05f, 100.0f);
+      glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+     
+      glm::mat4 view;
+      view = glm::lookAt(camPos, camPos + camFront, camUp);
+      glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-      glm::mat4 trans1;
-      trans1 = glm::translate(trans1, glm::vec3(-0.5f, 0.5f, 0.0f));
-      trans1 = glm::rotate(trans1, (float)time, glm::vec3(0.8f, 0.0f, 0.6f));
-      float movement = std::sin(time) / 4.0f + 0.5f;
-      trans1 = glm::scale(trans1, glm::vec3(movement, movement, 1.0f));
-      glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "transform"), 1, GL_FALSE, glm::value_ptr(trans1));
-
-      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+      for (int i = 0; i < 10; ++i)
+      {
+         glm::mat4 model;
+         model = glm::translate(model, cubePositions[i]);
+         model = glm::rotate(model, i % 3 * (float)glfwGetTime(), glm::vec3(i / 10.0f, 1 - i/10.0f, 0.0f));
+         glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+         
+         glDrawArrays(GL_TRIANGLES, 0, 36);
+      }
+      //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
       glfwPollEvents();
       glfwSwapBuffers(window);
