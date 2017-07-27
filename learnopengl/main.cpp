@@ -10,21 +10,84 @@
 #include "texture.h"
 #include "shader\shader.h";
 
+namespace
+{
+   int window_width = 800;
+   int window_height = 600;
 
-int window_width = 800;
-int window_height = 600;
+   float gamma = 0.0f;
+   float clearR = 0.2f, clearG = 0.3f, clearB = 0.3f;
 
-float gamma = 0.0f;
+   float lastFrame = 0.0f;
+   float deltaTime = 0.0f;
 
-glm::vec3 camPos(0.0f, 0.0f, 3.0f);
-glm::vec3 camFront(0.0f, 0.0f, -1.0f);
-glm::vec3 camUp(0.0f, 1.0f, 0.0f);
+   bool cursorFirstEntry = true;
+
+   float camFOV = 70.0f;
+
+   float camPitch = 0.0f;
+   float camYaw = -90.0f;
+
+   float camLastX = window_width / 2;
+   float camLastY = window_height / 2;
+
+   glm::vec3 camPos(0.0f, 0.0f, 3.0f);
+   glm::vec3 camFront(0.0f, 0.0f, -1.0f);
+   glm::vec3 camUp(0.0f, 1.0f, 0.0f);
+}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
    window_width = width;
    window_height = height;
    glViewport(0, 0, window_width, window_height);
+}
+
+void mouse_movement_callback(GLFWwindow* window, double xPos, double yPos)
+{
+   if (cursorFirstEntry)
+   {
+      camLastX = xPos;
+      camLastY = yPos;
+
+      cursorFirstEntry = false;
+   }
+
+   float sensitivity = 0.05f;
+
+   camPitch += (yPos - camLastY) * sensitivity;
+   camLastY = yPos;
+
+   camYaw += (xPos - camLastX) * sensitivity;
+   camLastX = xPos;
+
+   if (camPitch > 89.9f)
+      camPitch = 89.9f;
+   if (camPitch < -89.9f)
+      camPitch = -89.9f;
+
+   glm::vec3 front;
+   front.x = cos(glm::radians(camYaw)) * cos(glm::radians(camPitch));
+   front.y = -sin(glm::radians(camPitch));
+   front.z = sin(glm::radians(camYaw)) * cos(glm::radians(camPitch));
+
+   camFront = glm::normalize(front);
+}
+
+void mouse_wheel_callback(GLFWwindow* window, double offsetX, double offsetY)
+{
+   if (camFOV >= 1.0f && camFOV <= 70.0f)
+   {
+      camFOV -= offsetY;
+   }
+   if (camFOV < 1.0f)
+   {
+      camFOV = 1.0f;
+   }
+   if (camFOV > 70.0f)
+   {
+      camFOV = 70.0f;
+   }
 }
 
 void processInput(GLFWwindow* window, Shader& program)
@@ -34,15 +97,16 @@ void processInput(GLFWwindow* window, Shader& program)
       glfwSetWindowShouldClose(window, true);
    }
 
-   float cameraSpeed = 0.05f; // adjust accordingly
+   float cameraSpeed = deltaTime * 1.5f; // adjust accordingly
+   glm::vec3 cam(camFront.x, 0.0f ,camFront.z);
    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-      camPos += cameraSpeed * camFront;
+      camPos += cameraSpeed * cam;
    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-      camPos -= cameraSpeed * camFront;
+      camPos -= cameraSpeed * cam;
    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-      camPos -= glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+      camPos -= glm::normalize(glm::cross(cam, camUp)) * cameraSpeed;
    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-      camPos += glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+      camPos += glm::normalize(glm::cross(cam, camUp)) * cameraSpeed;
    
    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
    {
@@ -80,6 +144,10 @@ int main()
    glfwMakeContextCurrent(window);
    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+   glfwSetCursorPosCallback(window, mouse_movement_callback);
+
+   glfwSetScrollCallback(window, mouse_wheel_callback);
 
    if( !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) )
    {
@@ -177,32 +245,35 @@ int main()
    glBindVertexArray(0);
 
    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-   float clearR = 0.2f, clearG = 0.3f, clearB = 0.3f;
 
    Shader shader("shader/basic.slvs", "shader/basic.slfs");
    glEnable(GL_DEPTH_TEST);
 
    while( !glfwWindowShouldClose(window) )
    { 
+      float currentTime = glfwGetTime();
+      deltaTime = currentTime - lastFrame;
+      lastFrame = currentTime;
+
       processInput(window, shader);
 
       glClearColor(clearR, clearG, clearB, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	   shader.use();
-	   shader.setUniform("ourTexture1", 0);
-	   shader.setUniform("ourTexture2", 1);
+      shader.use();
+      shader.setUniform("ourTexture1", 0);
+      shader.setUniform("ourTexture2", 1);
       shader.setUniform("gamma", gamma);
 
       glBindVertexArray(VAO);
-	   containter.bind(GL_TEXTURE0);
-	   awsomeface.bind(GL_TEXTURE1);
+      containter.bind(GL_TEXTURE0);
+      awsomeface.bind(GL_TEXTURE1);
 
 
       glm::mat4 projection;
-      projection = glm::perspective(glm::radians(70.0f), (float)window_width / window_height, 0.05f, 100.0f);
+      projection = glm::perspective(glm::radians(camFOV), (float)window_width / window_height, 0.05f, 100.0f);
       glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-     
+
       glm::mat4 view;
       view = glm::lookAt(camPos, camPos + camFront, camUp);
       glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "view"), 1, GL_FALSE, glm::value_ptr(view));
