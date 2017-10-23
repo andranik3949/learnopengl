@@ -36,8 +36,8 @@ public:
 	{
 		glUseProgram(ID);
 	}
-
-	unsigned int getID()
+   
+   unsigned int getID()
 	{
 		return ID;
 	}
@@ -45,6 +45,7 @@ public:
 	void setUniform(const std::string& name, int value) { glUniform1i(glGetUniformLocation(ID, name.c_str()), value); }
 	void setUniform(const std::string& name, bool value) { glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value); }
 	void setUniform(const std::string& name, float value) { glUniform1f(glGetUniformLocation(ID, name.c_str()), value); }
+   void setUniform(const std::string& name, glm::vec3 value) { glUniform3f(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z); }
 
 private:
 	unsigned int compileShader(GLenum type, std::string shadername)

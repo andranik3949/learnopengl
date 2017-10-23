@@ -69,8 +69,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\Ando\Development\3rdparty\gl\include;D:\Ando\Development\3rdparty\stb\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>D:\Ando\Development\3rdparty\gl\lib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <IncludePath>$(OpenGL_IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(OpenGL_LibraryPath);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Users\andranik\Desktop\gl\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
@@ -134,8 +134,13 @@
     <None Include="shader\basic.slvs" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="board.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="object.h" />
     <ClInclude Include="shader\shader.h" />
+    <ClInclude Include="cube.h" />
     <ClInclude Include="texture.h" />
+    <ClInclude Include="utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
